@@ -1,0 +1,147 @@
+{
+  "EDITOR_STATE": {
+    "allProjectFiles": {
+      "16d2e597-d03d-4d8a-8068-89c9260e0112": {
+        "id": "16d2e597-d03d-4d8a-8068-89c9260e0112",
+        "parent": null,
+        "name": "chatConnect",
+        "type": "DIRECTORY",
+        "isDirectory": true,
+        "children": [
+          "743c0c38-fcb9-4e7d-86c6-85e38bc74114",
+          "7eca8fab-e439-4776-9827-0c0391584393"
+        ],
+        "isRemovable": false,
+        "filePath": "chatConnect"
+      },
+      "743c0c38-fcb9-4e7d-86c6-85e38bc74114": {
+        "id": "743c0c38-fcb9-4e7d-86c6-85e38bc74114",
+        "parent": "16d2e597-d03d-4d8a-8068-89c9260e0112",
+        "name": "lambda.js",
+        "type": "JS_LAMBDA",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": true,
+        "filePath": "chatConnect/lambda.js",
+        "code": "let SL_AWS = require('slappforge-sdk-aws');\nlet connectionManager = require('./ConnectionManager');\nconst rds = new SL_AWS.RDS(connectionManager);\n\nexports.handler = function (event, context, callback) {\n\n    // You can pass the existing connection to this function.\n    // A new connection will be created if it's not present as the third param \n    // You must always end/destroy the DB connection after it's used\n    rds.query({\n        instanceIdentifier: 'main',\n        query: 'SELECT * FROM chat',\n        inserts: [0]\n    }, function (error, results, connection) {\n        if (error) {\n            console.log(\"Error occurred\");\n            throw error;\n        } else {\n            console.log(\"Success\")\n            console.log(results);\n        }\n\n        connection.end();\n    });\n\n    callback(null, { \"message\": \"Successfully executed\" });\n}",
+        "config": {
+          "runtime": "nodejs8.10",
+          "handler": "handler",
+          "timeout": 60,
+          "memory": 128,
+          "layers": []
+        },
+        "triggers": [],
+        "testCases": {
+          "f3d08ed4-efff-4a12-98c8-2902dded37c8": {
+            "id": "f3d08ed4-efff-4a12-98c8-2902dded37c8",
+            "name": "Unnamed event",
+            "functionId": "743c0c38-fcb9-4e7d-86c6-85e38bc74114",
+            "event": "{}"
+          }
+        }
+      },
+      "7eca8fab-e439-4776-9827-0c0391584393": {
+        "id": "7eca8fab-e439-4776-9827-0c0391584393",
+        "parent": "16d2e597-d03d-4d8a-8068-89c9260e0112",
+        "name": "ConnectionManager.js",
+        "type": "JS_FILE",
+        "isDirectory": false,
+        "children": [],
+        "isRemovable": true,
+        "filePath": "chatConnect/ConnectionManager.js",
+        "code": "module.exports = function() {\n    this.dbConnections = [];\n\n    this.dbConnections[\"main\"] = {\n        host: \"main.c2guhaphxbdj.us-east-1.rds.amazonaws.com\",\n        port: \"3306\",\n        user: \"admin\",\n        password: process.env.Password_rdsMain,\n        database: \"Main\"\n    };\n};"
+      }
+    },
+    "deletedFiles": [],
+    "rootNode": "16d2e597-d03d-4d8a-8068-89c9260e0112",
+    "openFiles": [
+      "743c0c38-fcb9-4e7d-86c6-85e38bc74114",
+      "7eca8fab-e439-4776-9827-0c0391584393"
+    ],
+    "currentFileId": "743c0c38-fcb9-4e7d-86c6-85e38bc74114",
+    "resources": {
+      "rds-main": {
+        "name": "rds-main",
+        "type": "RDS",
+        "config": {
+          "editMode": false,
+          "operation": 0,
+          "rdsInstance": {
+            "rdsEngineType": "mysql",
+            "rdsEdition": "mysql",
+            "rdsInstanceSpec": {
+              "dbInstanceClass": "db.t2.micro",
+              "dbLicenseModel": "general-public-license",
+              "dbEngineVersion": "5.7.19"
+            },
+            "rdsSetting": {
+              "instanceIdentifier": "main",
+              "masterUsername": "admin",
+              "masterPassword": "password"
+            },
+            "rdsDBOptions": {
+              "dbName": "Main",
+              "dbPort": 3306
+            },
+            "rdsInstanceArn": "arn:aws:rds:us-east-1:509688276117:db:main",
+            "Host": "main.c2guhaphxbdj.us-east-1.rds.amazonaws.com",
+            "doesExist": true
+          },
+          "rdsInstanceResources": [],
+          "projectRegion": "us-east-1",
+          "mode": 1,
+          "additionalFiles": [],
+          "params": {
+            "query": "SELECT * FROM chat",
+            "inserts": "0"
+          },
+          "isGlobalEditMode": false,
+          "enableInject": true,
+          "isNewFromGlobal": false
+        }
+      }
+    },
+    "customTemplate": {
+      "dialect": null,
+      "definitions": {}
+    },
+    "envVariables": [
+      {
+        "lambdaId": "all",
+        "varKey": "SIGMA_AWS_ACC_ID",
+        "varValue": null,
+        "shouldPersist": false,
+        "displayOnly": false,
+        "editable": false
+      }
+    ],
+    "packageJSON": {
+      "dependencies": {
+        "slappforge-sdk-aws": {
+          "name": "slappforge-sdk-aws",
+          "language": "javascript",
+          "version": "0.0.5",
+          "dev": false,
+          "notRemovable": false
+        }
+      }
+    }
+  },
+  "PROJECT_META": {
+    "projectName": "chatConnect",
+    "projectDescription": "",
+    "projectVersion": "1.0.0",
+    "projectRegion": "us-east-1",
+    "platform": "AWS",
+    "platformRegions": {},
+    "lastSave": 1566485328391
+  },
+  "VCS_STATE": {
+    "provider": "GitHub",
+    "repo": {
+      "name": "chatConnect",
+      "url": "https://github.com/ghariosk/chatConnect"
+    }
+  }
+}
