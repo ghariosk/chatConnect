@@ -1,6 +1,8 @@
 let SL_AWS = require('slappforge-sdk-aws');
 let connectionManager = require('./ConnectionManager');
 const rds = new SL_AWS.RDS(connectionManager);
+var AWS = require("aws-sdk");
+AWS.config.update({ region: 'us-east-1' });
 
 exports.handler = function (event, context, callback) {
 
@@ -9,8 +11,8 @@ exports.handler = function (event, context, callback) {
     // You must always end/destroy the DB connection after it's used
     rds.query({
         instanceIdentifier: 'main',
-        query: 'SELECT * FROM chat',
-        inserts: [0]
+        query: 'INSERT INTO chat (connectionId) VALUES (?);',
+        inserts: [event.requestContext.connectionId]
     }, function (error, results, connection) {
         if (error) {
             console.log("Error occurred");
@@ -21,7 +23,13 @@ exports.handler = function (event, context, callback) {
         }
 
         connection.end();
+            callback(null, {
+      statusCode: error ? 500 : 200,
+      body: error ? "Failed to connect: " + JSON.stringify(error) : "Connected."
     });
 
-    callback(null, { "message": "Successfully executed" });
+
+    });
+
+
 }

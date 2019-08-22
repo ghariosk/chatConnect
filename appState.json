@@ -23,7 +23,7 @@
         "children": [],
         "isRemovable": true,
         "filePath": "chatConnect/lambda.js",
-        "code": "let SL_AWS = require('slappforge-sdk-aws');\nlet connectionManager = require('./ConnectionManager');\nconst rds = new SL_AWS.RDS(connectionManager);\n\nexports.handler = function (event, context, callback) {\n\n    // You can pass the existing connection to this function.\n    // A new connection will be created if it's not present as the third param \n    // You must always end/destroy the DB connection after it's used\n    rds.query({\n        instanceIdentifier: 'main',\n        query: 'SELECT * FROM chat',\n        inserts: [0]\n    }, function (error, results, connection) {\n        if (error) {\n            console.log(\"Error occurred\");\n            throw error;\n        } else {\n            console.log(\"Success\")\n            console.log(results);\n        }\n\n        connection.end();\n    });\n\n    callback(null, { \"message\": \"Successfully executed\" });\n}",
+        "code": "let SL_AWS = require('slappforge-sdk-aws');\nlet connectionManager = require('./ConnectionManager');\nconst rds = new SL_AWS.RDS(connectionManager);\nvar AWS = require(\"aws-sdk\");\nAWS.config.update({ region: 'us-east-1' });\n\nexports.handler = function (event, context, callback) {\n\n    // You can pass the existing connection to this function.\n    // A new connection will be created if it's not present as the third param \n    // You must always end/destroy the DB connection after it's used\n    rds.query({\n        instanceIdentifier: 'main',\n        query: 'INSERT INTO chat (connectionId) VALUES (?);',\n        inserts: [event.requestContext.connectionId]\n    }, function (error, results, connection) {\n        if (error) {\n            console.log(\"Error occurred\");\n            throw error;\n        } else {\n            console.log(\"Success\")\n            console.log(results);\n        }\n\n        connection.end();\n            callback(null, {\n      statusCode: error ? 500 : 200,\n      body: error ? \"Failed to connect: \" + JSON.stringify(error) : \"Connected.\"\n    });\n\n\n    });\n\n\n}",
         "config": {
           "runtime": "nodejs8.10",
           "handler": "handler",
@@ -38,6 +38,12 @@
             "name": "Unnamed event",
             "functionId": "743c0c38-fcb9-4e7d-86c6-85e38bc74114",
             "event": "{}"
+          },
+          "d8ae5803-53d8-4ad4-9b8e-5a71c42314b7": {
+            "id": "d8ae5803-53d8-4ad4-9b8e-5a71c42314b7",
+            "name": "Unnamed event",
+            "functionId": "743c0c38-fcb9-4e7d-86c6-85e38bc74114",
+            "event": "{\n    \"requestContext\": \n        {\n            \"connectionId\": \"1234567\"\n        }\n}"
           }
         }
       },
@@ -135,7 +141,7 @@
     "projectRegion": "us-east-1",
     "platform": "AWS",
     "platformRegions": {},
-    "lastSave": 1566485328391
+    "lastSave": 1566486825407
   },
   "VCS_STATE": {
     "provider": "GitHub",
